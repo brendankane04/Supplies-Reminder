@@ -101,7 +101,7 @@ def receive_mail():
 
 # returns a list of every string in the supplies database, returns [] if empty
 def get_data():
-    tmp_conn = sqlite3.connect('test.db')
+    tmp_conn = sqlite3.connect('supplies_data.db')
     supplies = []
     for curr_tup in tmp_conn.execute("SELECT item FROM supplies ORDER BY item ASC").fetchall():
         supplies.append(curr_tup[0])
@@ -111,7 +111,7 @@ def get_data():
 
 # adds a string to the database
 def data_add(element):
-    tmp_conn = sqlite3.connect('test.db')
+    tmp_conn = sqlite3.connect('supplies_data.db')
     tmp_conn.execute("INSERT INTO supplies (item) VALUES (?)", [element])
     tmp_conn.commit()
     tmp_conn.close()
@@ -119,7 +119,7 @@ def data_add(element):
 
 # returns true if the database contains the string
 def data_contains(element):
-    tmp_conn = sqlite3.connect('test.db')
+    tmp_conn = sqlite3.connect('supplies_data.db')
     lst = tmp_conn.execute("SELECT * FROM supplies WHERE item=?", [element]).fetchall()
     tmp_conn.close()
     if lst:
@@ -130,7 +130,7 @@ def data_contains(element):
 
 # removes an element from the database
 def data_delete(element):
-    tmp_conn = sqlite3.connect('test.db')
+    tmp_conn = sqlite3.connect('supplies_data.db')
     tmp_conn.execute("DELETE FROM supplies WHERE item=?", [element])
     tmp_conn.commit()
     tmp_conn.close()
@@ -138,7 +138,7 @@ def data_delete(element):
 
 # see if the database is empty
 def data_empty():
-    tmp_conn = sqlite3.connect('test.db')
+    tmp_conn = sqlite3.connect('supplies_data.db')
     lst = tmp_conn.execute("SELECT item FROM supplies").fetchall()
     tmp_conn.close()
     if lst:
@@ -164,7 +164,7 @@ if __name__ == "__main__":
         roommates_list = file.read().splitlines()
 
     # Establish connection to database
-    conn = sqlite3.connect('test.db')
+    conn = sqlite3.connect('supplies_data.db')
 
     # Create a table if none already exists
     if not conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='supplies';").fetchall():
