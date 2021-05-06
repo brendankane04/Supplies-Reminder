@@ -19,7 +19,7 @@ If you run this line in the console with the .txt files formatted as described,
 the program should work correctly, in the background. 
 
 **For Linux:**
-`python supplies_reminder.py sender_info.txt users.txt &`
+`python3 supplies_reminder.py sender_info.txt users.txt &`
 
 **For Windows:**
 `start /b python.exe supplies_reminder.py sender_info.txt users.txt`
