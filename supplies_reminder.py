@@ -139,7 +139,7 @@ def data_delete(element):
 # see if the database is empty
 def data_empty():
     tmp_conn = sqlite3.connect('test.db')
-    lst = tmp_conn.execute("SELECT item FROM supplies")
+    lst = tmp_conn.execute("SELECT item FROM supplies").fetchall()
     tmp_conn.close()
     if lst:
         return False
@@ -167,7 +167,7 @@ if __name__ == "__main__":
     conn = sqlite3.connect('test.db')
 
     # Create a table if none already exists
-    if not conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='supplies';"):
+    if not conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='supplies';").fetchall():
         conn.execute("CREATE TABLE supplies ( \
                     ID INTEGER PRIMARY KEY AUTOINCREMENT, \
                     item TEXT \
