@@ -154,56 +154,59 @@ def status_update(subject):
 
 
 if __name__ == "__main__":
+    try:
+        # Load in the email & password of the email sending bot
+        with open(sys.argv[1], "r") as file:
+            sender_email, password = file.read().splitlines()
 
-    # Load in the email & password of the email sending bot
-    with open(sys.argv[1], "r") as file:
-        sender_email, password = file.read().splitlines()
+        # Load in the array of users from the 'users.txt' file
+        with open(sys.argv[2], "r") as file:
+            roommates_list = file.read().splitlines()
 
-    # Load in the array of users from the 'users.txt' file
-    with open(sys.argv[2], "r") as file:
-        roommates_list = file.read().splitlines()
+        # Establish connection to database
+        conn = sqlite3.connect('supplies_data.db')
 
-    # Establish connection to database
-    conn = sqlite3.connect('supplies_data.db')
+        # Create a table if none already exists
+        if not conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='supplies';").fetchall():
+            conn.execute("CREATE TABLE supplies ( \
+                        ID INTEGER PRIMARY KEY AUTOINCREMENT, \
+                        item TEXT \
+            )")
 
-    # Create a table if none already exists
-    if not conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='supplies';").fetchall():
-        conn.execute("CREATE TABLE supplies ( \
-                    ID INTEGER PRIMARY KEY AUTOINCREMENT, \
-                    item TEXT \
-        )")
+        # finish with database
+        conn.commit()
+        conn.close()
 
-    # finish with database
-    conn.commit()
-    conn.close()
+        while True:
+            # get the list of senders and messages
+            senders, messages = receive_mail()
 
-    while True:
-        # get the list of senders and messages
-        senders, messages = receive_mail()
+            # if the lists aren't empty & input is received...
+            if senders != [] and messages != []:
 
-        # if the lists aren't empty & input is received...
-        if senders != [] and messages != []:
+                # iterate through the inbox...
+                for i in range(len(messages)):
 
-            # iterate through the inbox...
-            for i in range(len(messages)):
+                    # normalize the strings if there's a carriage return
+                    curr_message = messages[i]
 
-                # normalize the strings if there's a carriage return
-                curr_message = messages[i]
+                    # if curr_message not in supplies:
+                    if not data_contains(curr_message):
+                        # add element to list if not already in & update the users of the change
+                        data_add(curr_message)
+                        status_update("Item Added")
+                    else:
+                        # remove element from list if it's already there
+                        data_delete(curr_message)
+                        status_update("Item Removed")
 
-                # if curr_message not in supplies:
-                if not data_contains(curr_message):
-                    # add element to list if not already in & update the users of the change
-                    data_add(curr_message)
-                    status_update("Item Added")
-                else:
-                    # remove element from list if it's already there
-                    data_delete(curr_message)
-                    status_update("Item Removed")
+            # send an email to all users around 10am every day if there's anything to get
+            now = datetime.now().time()  # time object
+            if now.hour == 9 and now.minute == 0 and 0 <= now.second < 5:
+                if not data_empty():
+                    status_update("Daily List of Things We Need")
 
-        # send an email to all users around 10am every day if there's anything to get
-        now = datetime.now().time()  # time object
-        if now.hour == 9 and now.minute == 0 and 0 <= now.second < 5:
-            if not data_empty():
-                status_update("Daily List of Things We Need")
-
-        time.sleep(5)
+            time.sleep(5)
+    except Exception as e:
+        # Send the error message as an email to the head user
+        send_email(roommates_list[0:1], e)

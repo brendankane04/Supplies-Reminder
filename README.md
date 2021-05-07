@@ -33,7 +33,7 @@ All the files are line separated. Examples of the files are included in the orig
 **sender_info.txt:** This file has the email address of the gmail account the emails are sent from & its password
 ensure that the gmail account has "less secure app access" on or else you'll get authentication errors
 
-**users.txt:** This file is the list of every email address the list will be emailed to. 
+**users.txt:** This file is the list of every email address the list will be emailed to with the *administrator* coming first.
 By using phone numbers according to the [following format](https://www.techwalla.com/articles/how-to-send-a-text-message-from-email) 
 the program can send & receive text messages instead of emails. 
 It changes based on the carrier, so it doesn't always work.
