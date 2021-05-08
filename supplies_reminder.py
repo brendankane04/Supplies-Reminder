@@ -150,7 +150,11 @@ def data_empty():
 # sends the list of supplies to all the users
 def status_update(subject):
     supplies = get_data()
-    send_email(roommates_list, "Subject: " + subject + "\n" + "".join(supplies))
+    output = []
+    # add "-" before every element in the list
+    for curr in supplies:
+        output.append("-" + curr)
+    send_email(roommates_list, "Subject: " + subject + "\n" + "".join(output))
 
 
 if __name__ == "__main__":
